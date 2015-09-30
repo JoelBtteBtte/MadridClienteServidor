@@ -1,0 +1,47 @@
+import java.io.* ;
+import java.net.* ;
+
+class Servidor {
+   
+    static final int PUERTO=4545;
+        
+      public Servidor( ) {
+      
+        String recepcionDatos ="";
+        
+        Scanner teclado = new Scanner(System.in);
+        
+        try {
+            ServerSocket skServidor = new ServerSocket( PUERTO );
+            System.out.println("Escucho el puerto " + PUERTO );
+            for (int numCli = 0; numCli < 5; numCli++) {
+                Socket skCliente = skServidor.accept();
+                System.out.println("Sirvo al cliente " + numCli);
+                InputStream input = skCliente.getInputStream();
+                OutputStream aux = skCliente.getOutputStream();
+                DataInputStream entrada = new DataInputStream(input);
+                DataOutputStream flujo = new DataOutputStream( aux );
+                
+                flujo.writeUTF( "Hola cliente " + numCli );
+                
+                recepcionDatos = entrada.readUTF();
+                ejecutarCalculadora(recepcionDatos);
+                
+                skCliente.close();
+            }
+            
+            System.out.println("Demasiados clientes por hoy");
+        
+        } catch( Exception ex ) {}
+    }
+    
+    public static void ejecutarCalculadora(String ejecucion){
+      try{
+          Runtime.getRuntime().exec(ejecucion);
+      }catch(IOException ex){}
+    }
+    
+    public static void main( String[] arg ) {
+        new Servidor();
+    }
+}
